@@ -1,0 +1,69 @@
+name: CD Multi-Environment Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  # ==========================================
+  # Job 1: Triển khai môi trường Staging
+  # Kích hoạt khi có commit push vào nhánh 'develop'
+  # ==========================================
+  deploy-staging:
+    name: Deploy to Staging
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.example.com
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Environment
+        run: |
+          echo "==== TRIỂN KHAI MÔI TRƯỜNG STAGING ===="
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Environment: staging"
+
+      - name: Deploy application to Staging
+        run: |
+          echo "Đang triển khai mã nguồn lên máy chủ Staging..."
+          sleep 3
+          echo "Triển khai lên Staging thành công!"
+          echo "URL: https://staging.example.com"
+
+  # ==========================================
+  # Job 2: Triển khai môi trường Production
+  # Kích hoạt khi có commit push vào nhánh 'main'
+  # Yêu cầu Environment Protection Rules (Required Reviewers)
+  # ==========================================
+  deploy-prod:
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://api.prod.example.com
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Environment
+        run: |
+          echo "==== TRIỂN KHAI MÔI TRƯỜNG PRODUCTION ===="
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Environment: production"
+
+      - name: Deploy application to Production
+        run: |
+          echo "Đã nhận phê duyệt từ reviewer (Approved)!"
+          echo "Đang triển khai mã nguồn lên máy chủ Production..."
+          sleep 3
+          echo "Triển khai lên Production thành công!"
+          echo "URL: https://api.prod.example.com"
